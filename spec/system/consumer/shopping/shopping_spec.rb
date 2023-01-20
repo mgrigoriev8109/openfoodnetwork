@@ -51,6 +51,20 @@ describe "As a consumer I want to shop with a distributor", js: true do
       expect(page).to have_content supplier.name
     end
 
+    it "shows a shop item short description with italic bold underlined text" do
+      login_as_admin_and_visit spree.admin_products_path product
+      find("a.edit-product").click
+      page.driver.debug(binding)
+      within(".btn-group") do
+        click_on("b")
+      end
+      page.find("div[id^='taTextElement']").native.send_keys('bold italic underline')
+      click_button 'Update'
+      visit shop_path
+
+      expect(page).to have_content("<b><i><u>bold italic underline</b></i></u>")
+    end
+
     describe "selecting an order cycle" do
       let(:exchange1) { oc1.exchanges.to_enterprises(distributor).outgoing.first }
 
